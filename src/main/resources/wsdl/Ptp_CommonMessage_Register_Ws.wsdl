@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://pt.documentManagement.kz/Ptp_CommonMessage_Register_Ws" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="Untitled" targetNamespace="http://pt.documentManagement.kz/Ptp_CommonMessage_Register_Ws">
+    <wsdl:types>
+        <xs:schema xmlns="http://pt.documentManagement.kz/Ptp_CommonMessage_Register_Ws" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://pt.documentManagement.kz/Ptp_CommonMessage_Register_Ws" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:complexType name="SimpleResponseType">
+                <xs:sequence>
+                    <xs:element name="result">
+                        <xs:annotation>
+                            <xs:documentation>Блок содержит информацию о результате выполнения операции.</xs:documentation>
+                        </xs:annotation>
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="code" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>Код ответа полученный от вызываемой системы.
+				 							SUCCESS – сообщение успешно принято;											 											
+											 RUNTIME_EXCEPTION – ошибка некорректного обращения к сервису или необработанная внутренняя ошибка.
+											 PARSE_EXCEPTION – ошибка при парсинге XML сообщения. Нет смысла делать повторный вызов операции.
+											 TIMEOUT_EXCEPTION - истекло время ожидания ответа от системы, к которой было обращение.
+											 CRYPTO_VEFIFY_EXCEPTION – ошибка, проверке подписи/подпись не валидная.
+									</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="message" type="xs:string" minOccurs="0">
+                                    <xs:annotation>
+                                        <xs:documentation>сообщение об ошибке</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="registerMessageResponseType">
+                <xs:complexContent>
+                    <xs:extension base="tns:SimpleResponseType">
+                        <xs:sequence>
+                            <xs:element name="data">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="requestId" type="xs:string">
+                                            <xs:annotation>
+                                                <xs:documentation>requestId запроса</xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:extension>
+                </xs:complexContent>
+            </xs:complexType>
+            <xs:element name="registerMessageRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="senderBic" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>БИК отправителя</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="receiverBic" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>БИК получателя</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="requestId" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>уникальный id запроса</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="messageType" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>тип отправляемого сообщения/документа</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="messageDescription" type="xs:string" minOccurs="0"/>
+                        <xs:element name="data" type="xs:anyType">
+                            <xs:annotation>
+                                <xs:documentation>бизнес-сообщение согласно messageType</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="registerMessageResponse" type="tns:registerMessageResponseType"/>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="Ptp_CommonMessage_Register_Ws">
+        <wsdl:port name="Ptp_CommonMessage_Register_Ws_PortTypeEndpoint" binding="tns:Ptp_CommonMessage_Register_Ws_PortTypeEndpointBinding">
+            <soap:address location="http://localhost:27448/Ptp_CommonMessage_Register_Ws"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="Ptp_CommonMessage_Register_Ws_PortType">
+        <wsdl:operation name="registerMessage">
+            <wsdl:input message="tns:registerMessageRequest"/>
+            <wsdl:output message="tns:registerMessageResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="Ptp_CommonMessage_Register_Ws_PortTypeEndpointBinding" type="tns:Ptp_CommonMessage_Register_Ws_PortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="registerMessage">
+            <soap:operation style="document" soapAction="/registerMessage"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="registerMessageRequest">
+        <wsdl:part name="request" element="tns:registerMessageRequest"/>
+    </wsdl:message>
+    <wsdl:message name="registerMessageResponse">
+        <wsdl:part name="response" element="tns:registerMessageResponse"/>
+    </wsdl:message>
+</wsdl:definitions>
